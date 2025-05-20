@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Montagem de Computador</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background: linear-gradient(to bottom, #6dd5ed, #2193b0); 
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1000px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 40px;
+      background-color: #ffffff; 
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .cards, .componentes {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .card {
+      width: 240px;
+      height: 160px;
+      background: linear-gradient(to right, #4d7bdf, #5b8de9); 
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: all 0.3s ease;
+      overflow: hidden;
+    }
+
+    .card:hover {
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+      transform: scale(1.03);
+    }
+
+    .descricao {
+      font-size: 14px;
+      color: #ffffff;
+      text-align: center;
+      line-height: 1.3;
+      margin-bottom: 12px;
+      height: 50px;
+      overflow: hidden;
+    }
+
+    .dropzone {
+      height: 80px;
+      border: 2px dashed #ccc;
+      border-radius: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #999;
+      transition: background-color 0.3s ease, border-color 0.3s ease;
+      position: relative;
+      background-color: #f0f8ff;
+    }
+
+    .dropzone:hover {
+      border-color: #8e44ad;
+    }
+
+    .dropzone.over {
+      background-color: #e0e0ff;
+      border-color: #8e44ad;
+      color: #333;
+    }
+
+    .componente {
+      background-color: #3498db;
+      color: white;
+      cursor: grab;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: bold;
+      text-align: center;
+      transition: all 0.3s ease;
+      margin: 10px;
+    }
+
+    .componente:hover {
+      background-color: #2980b9;
+    }
+
+    .componente.errado {
+      background-color: #e74c3c !important;
+    }
+
+    .componente.correto {
+      background-color: #2ecc71 !important;
+    }
+
+    .message {
+      font-size: 18px;
+      color: #333;
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    .message, #contadorCorretos {
+      font-size: 16px;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="cards">
+      <div class="card">
+        <div class="descricao">Executa instruções e processa dados.</div>
+        <div class="dropzone" id="dropProcessador"></div>
+      </div>
+      <div class="card">
+        <div class="descricao">Armazena dados temporários para acesso rápido.</div>
+        <div class="dropzone" id="dropMemoria"></div>
+      </div>
+      <div class="card">
+        <div class="descricao">Memória rápida entre a RAM e o processador.</div>
+        <div class="dropzone" id="dropCache"></div>
+      </div>
+      <div class="card">
+        <div class="descricao">Armazena dados de forma permanente.</div>
+        <div class="dropzone" id="dropHD"></div>
+      </div>
+      <div class="card">
+        <div class="descricao">Realiza operações matemáticas e lógicas.</div>
+        <div class="dropzone" id="dropALU"></div>
+      </div>
+      <div class="card">
+        <div class="descricao">Controla e coordena os componentes do processador.</div>
+        <div class="dropzone" id="dropUC"></div>
+      </div>
+      <div class="card">
+        <div class="descricao">Armazena dados temporários dentro do processador.</div>
+        <div class="dropzone" id="dropRegistradores"></div>
+      </div>
+      <div class="card">
+        <div class="descricao">Caminhos por onde os dados trafegam entre os componentes.</div>
+        <div class="dropzone" id="dropBarramentos"></div>
+      </div>
+    </div>
+
+    <div class="componentes" id="componentesArea" ondrop="dropBack(event)" ondragover="allowDrop(event)">
+      <div class="componente" id="componenteProcessador" draggable="true">Processador</div>
+      <div class="componente" id="componenteMemoria" draggable="true">Memória RAM</div>
+      <div class="componente" id="componenteCache" draggable="true">Memória Cache</div>
+      <div class="componente" id="componenteHD" draggable="true">Disco Rígido</div>
+      <div class="componente" id="componenteALU" draggable="true">ALU</div>
+      <div class="componente" id="componenteUC" draggable="true">Unidade de Controle</div>
+      <div class="componente" id="componenteRegistradores" draggable="true">Registradores</div>
+      <div class="componente" id="componenteBarramentos" draggable="true">Barramentos</div>
+    </div>
+
+    <div class="message" id="message">
+      Leia as descrições e arraste os componentes corretos!
+    </div>
+    <div class="message" id="contadorCorretos">
+      Componentes corretos: 0 de 8
+    </div>
+  </div>
+
+  <script>
+    const dragItems = document.querySelectorAll('.componente');
+    const dropZones = document.querySelectorAll('.dropzone');
+    const componentesArea = document.getElementById('componentesArea');
+
+    const corretos = {
+      dropProcessador: "componenteProcessador",
+      dropMemoria: "componenteMemoria",
+      dropCache: "componenteCache",
+      dropHD: "componenteHD",
+      dropALU: "componenteALU",
+      dropUC: "componenteUC",
+      dropRegistradores: "componenteRegistradores",
+      dropBarramentos: "componenteBarramentos"
+    };
+
+    function verificarCorretos() {
+      let totalCorretos = 0;
+
+      Object.keys(corretos).forEach(idZona => {
+        const zona = document.getElementById(idZona);
+        const componenteEsperado = corretos[idZona];
+        const componenteInserido = zona.querySelector('.componente');
+
+        if (componenteInserido) {
+          if (componenteInserido.id === componenteEsperado) {
+            componenteInserido.classList.remove('errado');
+            componenteInserido.classList.add('correto');
+            totalCorretos++;
+          } else {
+            componenteInserido.classList.add('errado');
+            componenteInserido.classList.remove('correto');
+          }
+        }
+      });
+
+      document.getElementById("contadorCorretos").textContent = Componentes corretos: ${totalCorretos} de 8;
+    }
+
+    dragItems.forEach(item => {
+      item.addEventListener('dragstart', (e) => {
+        e.dataTransfer.setData('text', e.target.id);
+        e.target.style.opacity = 0.5;
+      });
+
+      item.addEventListener('dragend', (e) => {
+        e.target.style.opacity = 1;
+      });
+    });
+
+    dropZones.forEach(zone => {
+      zone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        zone.classList.add('over');
+      });
+
+      zone.addEventListener('dragleave', () => {
+        zone.classList.remove('over');
+      });
+
+      zone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        zone.classList.remove('over');
+
+        const data = e.dataTransfer.getData('text');
+        const draggedItem = document.getElementById(data);
+
+        const existente = zone.querySelector('.componente');
+        if (existente) {
+          componentesArea.appendChild(existente);
+          existente.style.margin = "10px";
+        }
+
+        zone.appendChild(draggedItem);
+        draggedItem.style.margin = "0";
+
+        document.getElementById('message').textContent = "Componente adicionado!";
+        verificarCorretos();
+      });
+    });
+
+    function allowDrop(e) {
+      e.preventDefault();
+    }
+
+    function dropBack(e) {
+      e.preventDefault();
+      const data = e.dataTransfer.getData('text');
+      const draggedItem = document.getElementById(data);
+
+      if (componentesArea.contains(draggedItem)) return;
+
+      dropZones.forEach(zone => {
+        if (zone.contains(draggedItem)) {
+          zone.removeChild(draggedItem);
+        }
+      });
+
+      draggedItem.classList.remove('errado');
+      draggedItem.classList.remove('correto');
+      componentesArea.appendChild(draggedItem);
+      draggedItem.style.margin = "10px";
+
+      document.getElementById('message').textContent = "Componente removido!";
+      verificarCorretos();
+    }
+
+    componentesArea.addEventListener('click', (e) => {
+      if (e.target && e.target.classList.contains('componente')) {
+        const clickedItem = e.target;
+
+        dropZones.forEach(zone => {
+          if (zone.contains(clickedItem)) {
+            zone.removeChild(clickedItem);
+            componentesArea.appendChild(clickedItem);
+            clickedItem.style.margin = "10px";
+
+            document.getElementById('message').textContent = "Componente removido!";
+            verificarCorretos();
+          }
+        });
+      }
+    });
+
+    function embaralharComponentes() {
+      const container = document.getElementById('componentesArea');
+      const componentes = Array.from(container.children);
+      const embaralhados = componentes.sort(() => Math.random() - 0.5);
+      embaralhados.forEach(comp => container.appendChild(comp));
+    }
+
+    embaralharComponentes();
+  </script>
+</body>
+</html>
